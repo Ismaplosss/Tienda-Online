@@ -1,0 +1,309 @@
+﻿
+@{
+    ViewBag.Title = "Categoria";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<ol class="breadcrumb mb-4 mt-4">
+    <li class="breadcrumb-item"><a href="@Url.Action("Index","Home")">Resumen</a></li>
+    <li class="breadcrumb-item active">Categorias</li>
+</ol>
+
+
+
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-users me-1">   </i>Listado de Categorias
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-12">
+                <button type="button" class="btn btn-success" onclick="abrirModa(null)">  Crear Categoria  </button>
+
+
+            </div>
+
+        </div>
+        <hr />
+
+        <table id="TB_Categorias" class="display cell-border" style="width:100%">
+
+            <thead>
+                <tr>
+                    <th>Descripcion</th>
+                    <th>Fecha_Registro</th>
+                    <th>Activo</th>
+                    <th> </th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="For_Datos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="Titulo">Nueva Categoria</h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body g-2">
+                <div class="row">
+
+                    <input id="Txt_Id" value="0" />
+
+                    <div class="col-sm-6">
+                        <label for="txt_Descripcion" class="form-label">Descripción </label>
+                        <input type="text" class="form-control" id="txt_Descripcion" placeholder="Descripción" autocomplete="off">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="Txt_Fecha" class="form-label">Fecha Registro </label>
+                        <input type="text" class="form-control" id="Txt_Fecha" autocomplete="off" readonly>
+                    </div>
+
+
+                    <div class="col-sm-6">
+                        <label for="Select_Estado" class="form-label">Estado</label>
+                        <select class="form-select" id="Select_Estado">
+                            <option value="1">Activo</option>
+                            <option value="0">Desactivado</option>
+
+                        </select>
+
+
+                    </div>
+
+
+
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="Guardar()">Guardar Categoria</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+
+    <script>
+        var tablo;
+        var fila_seleccion = null;
+
+    tablo = $("#TB_Categorias").DataTable({
+       responsive: true,
+       ordering: false,
+     "ajax": {
+        url: '@Url.Action("Listar_Categoria", "Mantenedor")',
+        type: "GET",
+        dataType: "json"
+     },
+      "columns": [
+        { "data": "Descripcion" },
+        { "data": "Fecha_Registro" },
+        {
+            "data": "Activo",
+            "render": function (valor) {
+                return valor
+                    ? '<span class="badge bg-success">Si</span>'
+                    : '<span class="badge bg-danger">No</span>';
+            }
+        },
+        {
+            "defaultContent": '<button type="button" class="btn btn-primary btn-sm btn-editar"> <i class="fas fa-pen"></i></button>' +
+                              '<button type="button" class="btn btn-danger btn-sm ms-2 btn-eliminar"> <i class="fas fa-trash"></i></button>',
+            "orderable": false,
+            "searchable": false,
+            "width": "90px"
+        }
+       ],
+    "language": {
+        "url": "//cdn.datatables.net/plug-ins/2.2.2/i18n/es-ES.json"
+    }
+});
+
+function abrirModa(json) {
+    if (json != null) {
+        cambiarTexto(2);
+        $("#txt_Descripcion").val(json.Descripcion);
+        $("#Txt_Fecha").val(json.Fecha_Registro);
+        $("#Select_Estado").val(json.Activo == true ? 1 : 0);
+        $("#Txt_Id").val(json.IdCategoria);
+    } else {
+        cambiarTexto(1);
+        $("#txt_Descripcion").val("");
+        $("#Txt_Fecha").val("");
+        $("#Select_Estado").val(1);
+        $("#Txt_Id").val(0);
+    }
+    mostrarFecha();
+    $("#For_Datos").modal("show");
+}
+
+
+
+        function Guardar() {
+
+
+    var Categoria = {
+        IdCategoria: parseInt($("#Txt_Id").val()) || 0,
+        Activo: $("#Select_Estado").val() == "1",
+        Descripcion: $("#txt_Descripcion").val(),
+        Fecha_Registro: $("#Txt_Fecha").val()
+    };
+
+    jQuery.ajax({
+        url: '@Url.Action("Agregar_Categoria", "Mantenedor")',
+        type: "POST",
+        data: JSON.stringify({ objeto: Categoria }),
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+            if (data.resultado > 0) {
+
+
+                if (Categoria.IdCategoria == 0) { // Nuevo Categoria
+                    Categoria.IdCategoria = data.resultado;
+
+                    tablo.row.add(Categoria).draw(false);
+
+                } else { // Actualizar Categoria
+
+                    tablo.row(fila_seleccion).data(Categoria).draw(false);
+                    fila_seleccion = null;
+                }
+
+                $("#For_Datos").modal("hide");
+
+                setTimeout(function () {
+                    Swal.fire({
+                        title: "Dato almacenado con éxito!",
+                        icon: "success",
+                        draggable: true
+                    });
+                }, 500);
+            } else {
+                Swal.fire({
+                    title: "¿Ingresaste todos los datos?",
+                    text: data.mensaje,
+                    icon: "question"
+                });
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            Swal.fire({
+                icon: "error",
+                title: "Error al establecer conexión con el servidor",
+                text: textStatus + " - " + errorThrown,
+                footer: '<a href="#" Sabes lo que sucede?</a>'
+            });
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+function cambiarTexto(modo) {
+    const titulo = document.getElementById("Titulo");
+    if (titulo) {
+        titulo.textContent = (modo === 2) ? "Editar Categoria" : "Nuevo Categoria";
+    }
+}
+
+$("#TB_Categorias tbody").on("click", '.btn-editar', function () {
+     fila_seleccion = $(this).closest("tr");
+    var datos = tablo.row(fila_seleccion).data();
+    abrirModa(datos);
+});
+
+
+        $("#TB_Categorias tbody").on("click", '.btn-eliminar', function () {
+            Swal.fire({
+                title: "Acción denegada  ",
+                text: "No puedes eliminar ningun registro " ,
+                icon: "warning"
+            });
+
+        });
+
+
+
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Mostrar la fecha actual en formato adecuado
+        function mostrarFecha() {
+            const ahora = new Date();
+
+            // Obtener componentes de la fecha
+            const year = ahora.getFullYear();
+            const month = String(ahora.getMonth() + 1).padStart(2, '0'); // Sumar 1 porque los meses van de 0-11
+            const day = String(ahora.getDate()).padStart(2, '0');
+
+            // Formato correcto para el input type="date"
+            const fechaFormato = `${year}-${month}-${day}`;
+
+            // Asignar al input
+            document.getElementById('Txt_Fecha').value = fechaFormato;
+        }
+
+
+
+
+
+
+    </script>
+
+
+
+
+
+
+
+
+
+}
