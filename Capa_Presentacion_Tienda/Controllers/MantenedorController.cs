@@ -83,5 +83,28 @@ namespace Capa_Presentacion_Tienda.Controllers
         }
 
 
+
+
+
+        [HttpGet]
+        public  JsonResult Listar_Marcas()
+        {
+
+            try
+            {
+                List<Marca> Marcas = new List<Marca>();
+                Marcas = new Cn_Marca().Listar_Marca();
+
+                return Json(new { data = Marcas }, JsonRequestBehavior.AllowGet);
+
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = "Error al obtener las Marcas: " + ex.Message }, JsonRequestBehavior.AllowGet);
+
+            }
+
+        }
     }
 }
