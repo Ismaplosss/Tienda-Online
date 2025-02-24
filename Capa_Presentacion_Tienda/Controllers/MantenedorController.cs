@@ -106,5 +106,42 @@ namespace Capa_Presentacion_Tienda.Controllers
             }
 
         }
+
+
+
+
+        public JsonResult Agregar_Marca(Marca objeto)
+        {
+            object resultado = false;
+            string mensaje = string.Empty;
+
+            try
+            {
+                if (objeto == null)
+                {
+                    return Json(new { resultado = 0, mensaje = "Datos inválidos" });
+                }
+
+                Cn_Marca _Marca = new Cn_Marca();
+
+                if (objeto.IdMarca == 0)
+                {
+
+                    resultado = _Marca.Registrar_Marca(objeto, out mensaje);
+                }
+                else
+                {
+                    resultado = _Marca.Editar_Marca(objeto, out mensaje);
+
+                }
+
+                return Json(new { resultado, mensaje });
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { resultado = 0, mensaje = "Error en el servidor: " + ex.Message });
+            }
+        }
     }
 }

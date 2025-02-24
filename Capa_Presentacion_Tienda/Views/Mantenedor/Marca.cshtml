@@ -56,7 +56,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title" id="Titulo">Nueva Categoria</h5>
+                <h5 class="modal-title" id="Titulo">Nueva Marca</h5>
                 <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body g-2">
@@ -94,7 +94,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary" onclick="Guardar()">Guardar Categoria</button>
+                <button type="button" class="btn btn-primary" onclick="Guardar()">Guardar Marca</button>
             </div>
         </div>
     </div>
@@ -110,7 +110,7 @@
        responsive: true,
        ordering: false,
      "ajax": {
-        url: '@Url.Action("Listar_Categoria", "Mantenedor")',
+        url: '@Url.Action("Listar_Marcas", "Mantenedor")',
         type: "GET",
         dataType: "json"
      },
@@ -144,7 +144,7 @@ function abrirModa(json) {
         $("#txt_Descripcion").val(json.Descripcion);
         $("#Txt_Fecha").val(json.Fecha_Registro);
         $("#Select_Estado").val(json.Activo == true ? 1 : 0);
-        $("#Txt_Id").val(json.IdCategoria);
+        $("#Txt_Id").val(json.IdMarca);
     } else {
         cambiarTexto(1);
         $("#txt_Descripcion").val("");
@@ -169,23 +169,23 @@ function abrirModa(json) {
     };
 
     jQuery.ajax({
-        url: '@Url.Action("Agregar_Categoria", "Mantenedor")',
+        url: '@Url.Action("Agregar_Marca", "Mantenedor")',
         type: "POST",
-        data: JSON.stringify({ objeto: Categoria }),
+        data: JSON.stringify({ objeto: Marca }),
         dataType: "json",
         contentType: "application/json; charset=utf-8",
         success: function (data) {
             if (data.resultado > 0) {
 
 
-                if (Categoria.IdCategoria == 0) { // Nuevo Categoria
-                    Categoria.IdCategoria = data.resultado;
+                if (Marca.IdMarca == 0) { // Nuevo Marca
+                    Marca.IdMarca = data.resultado;
 
-                    tablo.row.add(Categoria).draw(false);
+                    tablo.row.add(Marca).draw(false);
 
-                } else { // Actualizar Categoria
+                } else { // Actualizar Marca
 
-                    tablo.row(fila_seleccion).data(Categoria).draw(false);
+                    tablo.row(fila_seleccion).data(Marca).draw(false);
                     fila_seleccion = null;
                 }
 
@@ -231,7 +231,7 @@ function abrirModa(json) {
 function cambiarTexto(modo) {
     const titulo = document.getElementById("Titulo");
     if (titulo) {
-        titulo.textContent = (modo === 2) ? "Editar Categoria" : "Nuevo Categoria";
+        titulo.textContent = (modo === 2) ? "Editar Marca" : "Nuevo Marca";
     }
 }
 
