@@ -3,6 +3,7 @@ using Capa_Negocio;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -143,5 +144,18 @@ namespace Capa_Presentacion_Tienda.Controllers
                 return Json(new { resultado = 0, mensaje = "Error en el servidor: " + ex.Message });
             }
         }
+
+
+
+
+
+
+     
+
+
+
+
+
+
     }
 }
