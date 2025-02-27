@@ -86,8 +86,8 @@
                     <div class="col-sm-6">
                         <label for="Select_Marca" class="form-label">Marca </label >
 
-                        <select class="form-select" id="Select_Marca" required>
-                            <option value="0">Selecciona una marca</option>
+                        <select class="form-select" id="Select_Marca" >
+                            
 
 
                         </select>
@@ -97,8 +97,8 @@
 
                     <div class="col-sm-6">
                         <label for="Select_Categoria" class="form-label">Categoria </label>
-                        <select class="form-select" id="Select_Categoria" required>
-                            <option value="0">Selecciona una categoria </option>
+                        <select class="form-select" id="Select_Categoria" >
+                           
 
 
                         </select>
@@ -230,13 +230,18 @@
             responsive: true,
             ordering: false,
             "ajax": {
-                url: '@Url.Action("Listar_Marcas", "Mantenedor")',
+                url: '@Url.Action("Listar_Productos", "Mantenedor")',
                 type: "GET",
                 dataType: "json"
             },
             "columns": [
+                { "data": "Nombre" },
                 { "data": "Descripcion" },
-                { "data": "Fecha_Registro" },
+                { data: 'OMarca.Descripcion' },  // ✅ Muestra la descripción de la marca
+                { data: 'OCategoria.Descripcion' }, // ✅ Muestra la categoría
+                { "data": "Precio" },
+                { "data": "Stock" },
+                { "data": "Nombre_Imagen" },
                 {
                     "data": "Activo",
                     "render": function (valor) {
@@ -245,6 +250,7 @@
                             : '<span class="badge bg-danger">No</span>';
                     }
                 },
+                { "data": "Fecha_Registro" },
                 {
                     "defaultContent": '<button type="button" class="btn btn-primary btn-sm btn-editar"> <i class="fas fa-pen"></i></button>' +
                                       '<button type="button" class="btn btn-danger btn-sm ms-2 btn-eliminar"> <i class="fas fa-trash"></i></button>',
@@ -259,80 +265,115 @@
         });
 
         // Llamar funciones al cargar
-      
-    });
 
-    function abrirModa(json) {
-        if (json != null) {
-            cambiarTexto(2);
-            $("#txt_Descripcion").val(json.Descripcion);
-            $("#Txt_Fecha").val(json.Fecha_Registro);
-            $("#Select_Estado").val(json.Activo ? 1 : 0);
-            $("#Txt_Id").val(json.IdMarca);
-        } else {
-            cambiarTexto(1);
-            $("#txt_Descripcion").val("");
-            $("#Txt_Fecha").val("");
-            $("#Select_Estado").val(1);
-            $("#Txt_Id").val(0);
-        }
-        $("#For_Datos").modal("show");
-        mostrarFecha();
         cargarMarcas();
         cargarCategorias();
-    }
+    });
 
-    function Guardar() {
-        var Marca = {
-            IdMarca: parseInt($("#Txt_Id").val()) || 0,
-            Activo: $("#Select_Estado").val() == "1",
-            Descripcion: $("#txt_Descripcion").val(),
-            Fecha_Registro: $("#Txt_Fecha").val()
-        };
+        function abrirModa(json) {
 
-        jQuery.ajax({
-            url: '@Url.Action("Agregar_Marca", "Mantenedor")',
-            type: "POST",
-            data: JSON.stringify({ objeto: Marca }),
-            dataType: "json",
-            contentType: "application/json; charset=utf-8",
-            success: function (data) {
-                if (data.resultado > 0) {
-                    if (Marca.IdMarca == 0) {
-                        Marca.IdMarca = data.resultado;
-                        tablo.row.add(Marca).draw(false);
-                    } else {
-                        tablo.row(fila_seleccion).data(Marca).draw(false);
-                        fila_seleccion = null;
-                    }
+            if (json != null) {
+                cambiarTexto(2);
+                $("#txt_Descripcion").val(json.Descripcion);
+                $("#Txt_Fecha").val(json.Fecha_Registro);
+                $("#Select_Estado").val(json.Activo ? 1 : 0);
+                $("#Txt_Id").val(json.IdProducto);
+                $("#Txt_Ruta_Imagen").val(json.Ruta_Imagen);
+                $("#txt_Nombre_Imagen").val(json.Nombre_Imagen);
+                $("#Txt_Nombre").val(json.Nombre);
+                $("#Txt_Precio").val(json.Precio);
+                $("#Txt_Stok").val(json.Stock);
 
-                    $("#For_Datos").modal("hide");
+                Seleccion_Text("#Select_Marca", json.OMarca.Descripcion);
+                Seleccion_Text("#Select_Categoria", json.OCategoria.Descripcion);
 
-                    setTimeout(function () {
-                        Swal.fire({
-                            title: "Dato almacenado con éxito!",
-                            icon: "success",
-                            draggable: true
-                        });
-                    }, 500);
-                } else {
-                    Swal.fire({
-                        title: "¿Ingresaste todos los datos?",
-                        text: data.mensaje,
-                        icon: "question"
-                    });
-                    return;
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Error al establecer conexión con el servidor",
-                    text: textStatus + " - " + errorThrown
-                });
+
+
+
+
+
+            } else {
+                cambiarTexto(1);
+                $("#txt_Descripcion").val("");
+                $("#Txt_Fecha").val("");
+                $("#Select_Estado").val(1);
+                $("#Txt_Id").val(0);
             }
-        });
-    }
+            mostrarFecha();
+            $("#For_Datos").modal("show");
+
+
+        }
+        function Guardar() {
+
+    var Producto = {
+        IdProducto: parseInt($("#Txt_Id").val()) || 0,
+        Descripcion: $("#txt_Descripcion").val(), // Obtener el valor de la descripción
+        Nombre: $("#Txt_Nombre").val(), // Obtener el valor del nombre
+        Fecha_Registro: $("#Txt_Fecha").val(), // Obtener el valor de la fecha
+        Activo: $("#Select_Estado").val() == "1", // Verificar si está activo
+        Ruta_Imagen: $("#Txt_Ruta_Imagen").val(), // Obtener el valor de la ruta de imagen
+        Stock: parseInt($("#Txt_Stok").val()) || 0, // Asegúrate de obtener el valor como número
+        Precio: parseFloat($("#Txt_Precio").val()) || 0, // Asegúrate de obtener el valor como número
+        Nombre_Imagen: $("#txt_Nombre_Imagen").val(), // Obtener el valor del nombre de imagen
+        OMarca: {
+            Descripcion: $("#Select_Marca option:selected").text() // Obtener la descripción de la marca seleccionada
+        },
+        OCategoria: {
+            Descripcion: $("#Select_Categoria option:selected").text() // Obtener la descripción de la categoría seleccionada
+        }
+    };
+
+    jQuery.ajax({
+        url: '@Url.Action("Registrar_Producto", "Mantenedor")',
+        type: "POST",
+        data: JSON.stringify({ objeto: Producto }), // Enviar el objeto como JSON
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+
+            if (data.resultado > 0) {
+
+                if (Producto.IdProducto == 0) {
+                    Producto.IdProducto = data.resultado; // Asignar el ID recibido
+                    tablo.row.add(Producto).draw(false); // Agregar fila a la tabla
+                } else {
+                    tablo.row(fila_seleccion).data(Producto).draw(false); // Actualizar fila existente
+                    fila_seleccion = null;
+                }
+
+                $("#For_Datos").modal("hide"); // Cerrar modal
+
+                setTimeout(function () {
+                    Swal.fire({
+                        title: "Dato almacenado con éxito!",
+                        icon: "success",
+                        draggable: true
+                    });
+                }, 500);
+            } else {
+                Swal.fire({
+                    title: "¿Ingresaste todos los datos?",
+                    text: data.mensaje, // Mostrar mensaje de error si no se ingresaron todos los datos
+                    icon: "question"
+                });
+                return;
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            Swal.fire({
+                icon: "error",
+                title: "Error al establecer conexión con el servidor",
+                text: textStatus + " - " + errorThrown // Mostrar error de conexión
+            });
+        }
+    });
+        }
+
+
+
+
+
 
     function cambiarTexto(modo) {
         const titulo = document.getElementById("Titulo");
@@ -396,12 +437,13 @@
                 dropdown.append('<option value="">Seleccione Una Marca</option>');
 
                 $.each(response.data, function (index, item) {
-                   
+
                     dropdown.append(`<option value="${item.IdMarca}">${item.Descripcion}</option>`);
                 });
             } else {
                 console.error("La API no devolvió datos válidos.");
             }
+
         },
         error: function (xhr, status, error) {
             console.error("Error al obtener las marcas:", error);
@@ -423,7 +465,7 @@
                 dropdown.append('<option value="">Seleccione Categoria </option>');
 
                 $.each(response.data, function (index, item) {
-                   
+
                     dropdown.append(`<option value="${item.IdCategoria}">${item.Descripcion}</option>`);
                 });
             } else {
@@ -468,7 +510,7 @@
         function Ver_Imagen(inputName, InputURL) {
 
             let url = InputURL.endsWith("/") ? InputURL : InputURL + "/";
-            console.log(url + inputName);
+
 
             if (inputName && inputName.value != "") {
                 Swal.fire({
@@ -484,15 +526,31 @@
                     icon: "error",
                     title: "Error al visualizar la Imagen",
                     text: "Primero carga la imagen ",
-                    
+
                 });
             }
-           
+
 
 
         }
 
-        
+        function Seleccion_Text(selector, texto)
+        {
+            if (!texto) return;
+
+            $(selector).find("option").each(function () {
+                if ($(this).text().trim() == texto.trim()) {
+                    $(selector).val($(this).val()).change();
+                    return false;
+
+                }
+            });
+
+
+        }
+
+
+
 
 
 
