@@ -4,5 +4,566 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Producto</h2>
+
+
+<ol class="breadcrumb mb-4 mt-4">
+    <li class="breadcrumb-item"><a href="@Url.Action("Index","Home")">Resumen</a></li>
+    <li class="breadcrumb-item active">Producto</li>
+</ol>
+
+
+
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-users me-1">   </i>Listado de Productos
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-12">
+                <button type="button" class="btn btn-success" onclick="abrirModa(null)">  Crear Marca  </button>
+
+
+            </div>
+
+        </div>
+        <hr />
+
+        <table id="TB_Marca" class="display cell-border" style="width:100%">
+
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripcion</th>
+                    <th>Marca</th>
+                    <th>Categoria</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Imagen</th>
+                    <th>Activo</th>
+                    <th>Fecha_Registro</th>
+                    <th> </th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="For_Datos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="Titulo">Nueva Marca</h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body g-2">
+                <div class="row">
+
+                    <input id="Txt_Id" value="0" />
+
+
+
+                    <div class="col-sm-6">
+                        <label for="Txt_Nombre" class="form-label">Nombre </label>
+                        <input type="text" class="form-control" id="Txt_Nombre" placeholder="Nombre" autocomplete="off">
+                    </div>
+
+
+                    <div class="col-sm-6">
+                        <label for="txt_Descripcion" class="form-label">Descripción </label>
+                        <input type="text" class="form-control" id="txt_Descripcion" placeholder="Descripción" autocomplete="off">
+                    </div>
+
+
+                    <div class="col-sm-6">
+                        <label for="Select_Marca" class="form-label">Marca </label >
+
+                        <select class="form-select" id="Select_Marca" >
+                            
+
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-sm-6">
+                        <label for="Select_Categoria" class="form-label">Categoria </label>
+                        <select class="form-select" id="Select_Categoria" >
+                           
+
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-sm-6">
+                        <label for="Txt_Precio" class="form-label">Precio </label>
+                        <input type="number" class="form-control" id="Txt_Precio" placeholder="Precio"  autocomplete="off">
+                    </div>
+
+
+                    <div class="col-sm-6">
+                        <label for="Txt_Stok" class="form-label">Stock </label>
+                        <input type="number" class="form-control" id="Txt_Stok" placeholder="Existencias">
+                    </div>
+
+
+                    <div class="col-sm-6">
+                        <label for="txt_Descripcion" class="form-label">Imagen  </label>
+                        <div class="col-sm-8">
+                            <button type="button" class="btn btn-primary" onclick="abrirModalImagen()">Editar Imagen</button>
+
+                        </div>
+
+
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="txt_Descripcion" class="form-label">Previsualizar Imagen  </label>
+                        <div class="col-sm-8">
+                            <button type="button" class="btn btn-warning" onclick="Ver_Imagen(document.getElementById('txt_Nombre_Imagen').value, document.getElementById('Txt_Ruta_Imagen').value)">Previsualizar </button>
+
+                        </div>
+
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="Txt_Fecha" class="form-label">Fecha Registro </label>
+                        <input type="text" class="form-control" id="Txt_Fecha" autocomplete="off" readonly>
+                    </div>
+
+
+                    <div class="col-sm-6">
+                        <label for="Select_Estado" class="form-label">Estado</label>
+                        <select class="form-select" id="Select_Estado">
+                            <option value="1">Activo</option>
+                            <option value="0">Desactivado</option>
+
+                        </select>
+
+
+                    </div>
+
+
+
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="Guardar()">Guardar Marca</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p> </p>
+
+<!-- Modal Secundario (Subir Imagen) -->
+<div class="modal fade " id="modalImagen" tabindex="-1" aria-labelledby="modalImagenLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title" id="modalImagenLabel">Subir Imagen</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+
+                <div class="col-sm-6">
+                    <label for="txt_Descripcion" class="form-label">Nombre Imagen </label>
+                    <input type="text" class="form-control" id="txt_Nombre_Imagen" readonly>
+                </div>
+
+
+                <div class="col-sm-6">
+                    <label for="Txt_Ruta_Imagen" class="form-label">Ruta imagen </label>
+                    <input type="text" class="form-control" id="Txt_Ruta_Imagen"  readonly>
+                </div>
+
+
+
+
+
+                <div class="col-sm-6">
+                    <label for="txt_Descripcion" class="form-label">Carga la Imagen </label>
+                    <input type="file" id="fileInput" class="form-control" accept="image/*" />
+
+
+                </div>
+
+
+
+
+
+                
+                <button class="btn btn-primary mt-2" onclick="Obtener_Nombre('fileInput','txt_Nombre_Imagen')">Subir</button>
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts {
+
+    <script>
+    var tablo;
+    var fila_seleccion = null;
+
+    $(document).ready(function () {
+        tablo = $("#TB_Marca").DataTable({
+            responsive: true,
+            ordering: false,
+            "ajax": {
+                url: '@Url.Action("Listar_Productos", "Mantenedor")',
+                type: "GET",
+                dataType: "json"
+            },
+            "columns": [
+                { "data": "Nombre" },
+                { "data": "Descripcion" },
+                { data: 'OMarca.Descripcion' },  // ✅ Muestra la descripción de la marca
+                { data: 'OCategoria.Descripcion' }, // ✅ Muestra la categoría
+                { "data": "Precio" },
+                { "data": "Stock" },
+                { "data": "Nombre_Imagen" },
+                {
+                    "data": "Activo",
+                    "render": function (valor) {
+                        return valor
+                            ? '<span class="badge bg-success">Si</span>'
+                            : '<span class="badge bg-danger">No</span>';
+                    }
+                },
+                { "data": "Fecha_Registro" },
+                {
+                    "defaultContent": '<button type="button" class="btn btn-primary btn-sm btn-editar"> <i class="fas fa-pen"></i></button>' +
+                                      '<button type="button" class="btn btn-danger btn-sm ms-2 btn-eliminar"> <i class="fas fa-trash"></i></button>',
+                    "orderable": false,
+                    "searchable": false,
+                    "width": "90px"
+                }
+            ],
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/2.2.2/i18n/es-ES.json"
+            }
+        });
+
+        // Llamar funciones al cargar
+
+        cargarMarcas();
+        cargarCategorias();
+    });
+
+        function abrirModa(json) {
+
+            if (json != null) {
+                cambiarTexto(2);
+                $("#txt_Descripcion").val(json.Descripcion);
+                $("#Txt_Fecha").val(json.Fecha_Registro);
+                $("#Select_Estado").val(json.Activo ? 1 : 0);
+                $("#Txt_Id").val(json.IdProducto);
+                $("#Txt_Ruta_Imagen").val(json.Ruta_Imagen);
+                $("#txt_Nombre_Imagen").val(json.Nombre_Imagen);
+                $("#Txt_Nombre").val(json.Nombre);
+                $("#Txt_Precio").val(json.Precio);
+                $("#Txt_Stok").val(json.Stock);
+
+                Seleccion_Text("#Select_Marca", json.OMarca.Descripcion);
+                Seleccion_Text("#Select_Categoria", json.OCategoria.Descripcion);
+
+
+
+
+
+
+            } else {
+                cambiarTexto(1);
+                $("#txt_Descripcion").val("");
+                $("#Txt_Fecha").val("");
+                $("#Select_Estado").val(1);
+                $("#Txt_Id").val(0);
+            }
+            mostrarFecha();
+            $("#For_Datos").modal("show");
+
+
+        }
+        function Guardar() {
+
+    var Producto = {
+        IdProducto: parseInt($("#Txt_Id").val()) || 0,
+        Descripcion: $("#txt_Descripcion").val(), // Obtener el valor de la descripción
+        Nombre: $("#Txt_Nombre").val(), // Obtener el valor del nombre
+        Fecha_Registro: $("#Txt_Fecha").val(), // Obtener el valor de la fecha
+        Activo: $("#Select_Estado").val() == "1", // Verificar si está activo
+        Ruta_Imagen: $("#Txt_Ruta_Imagen").val(), // Obtener el valor de la ruta de imagen
+        Stock: parseInt($("#Txt_Stok").val()) || 0, // Asegúrate de obtener el valor como número
+        Precio: parseFloat($("#Txt_Precio").val()) || 0, // Asegúrate de obtener el valor como número
+        Nombre_Imagen: $("#txt_Nombre_Imagen").val(), // Obtener el valor del nombre de imagen
+        OMarca: {
+            Descripcion: $("#Select_Marca option:selected").text() // Obtener la descripción de la marca seleccionada
+        },
+        OCategoria: {
+            Descripcion: $("#Select_Categoria option:selected").text() // Obtener la descripción de la categoría seleccionada
+        }
+    };
+
+    jQuery.ajax({
+        url: '@Url.Action("Registrar_Producto", "Mantenedor")',
+        type: "POST",
+        data: JSON.stringify({ objeto: Producto }), // Enviar el objeto como JSON
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+
+            if (data.resultado > 0) {
+
+                if (Producto.IdProducto == 0) {
+                    Producto.IdProducto = data.resultado; // Asignar el ID recibido
+                    tablo.row.add(Producto).draw(false); // Agregar fila a la tabla
+                } else {
+                    tablo.row(fila_seleccion).data(Producto).draw(false); // Actualizar fila existente
+                    fila_seleccion = null;
+                }
+
+                $("#For_Datos").modal("hide"); // Cerrar modal
+
+                setTimeout(function () {
+                    Swal.fire({
+                        title: "Dato almacenado con éxito!",
+                        icon: "success",
+                        draggable: true
+                    });
+                }, 500);
+            } else {
+                Swal.fire({
+                    title: "¿Ingresaste todos los datos?",
+                    text: data.mensaje, // Mostrar mensaje de error si no se ingresaron todos los datos
+                    icon: "question"
+                });
+                return;
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            Swal.fire({
+                icon: "error",
+                title: "Error al establecer conexión con el servidor",
+                text: textStatus + " - " + errorThrown // Mostrar error de conexión
+            });
+        }
+    });
+        }
+
+
+
+
+
+
+    function cambiarTexto(modo) {
+        const titulo = document.getElementById("Titulo");
+        if (titulo) {
+            titulo.textContent = (modo === 2) ? "Editar Marca" : "Nuevo Marca";
+        }
+    }
+
+    $("#TB_Marca tbody").on("click", '.btn-editar', function () {
+        fila_seleccion = $(this).closest("tr");
+        if (!fila_seleccion) return;
+        var datos = tablo.row(fila_seleccion).data();
+        abrirModa(datos);
+    });
+
+    $("#TB_Marca tbody").on("click", '.btn-eliminar', function () {
+        Swal.fire({
+            title: "Acción denegada",
+            text: "No puedes eliminar ningún registro",
+            icon: "warning"
+        });
+    });
+
+
+        // Mostrar la fecha actual en formato adecuado
+        function mostrarFecha() {
+            const ahora = new Date();
+
+            // Obtener componentes de la fecha
+            const year = ahora.getFullYear();
+            const month = String(ahora.getMonth() + 1).padStart(2, '0'); // Sumar 1 porque los meses van de 0-11
+            const day = String(ahora.getDate()).padStart(2, '0');
+
+            // Formato correcto para el input type="date"
+            const fechaFormato = `${year}-${month}-${day}`;
+
+            // Asignar al input
+            document.getElementById('Txt_Fecha').value = fechaFormato;
+            document.getElementById('Txt_Ruta_Imagen').value= "/Productos/"
+        }
+
+
+
+
+    function abrirModalImagen() {
+        $("#modalImagen").modal("show");
+    }
+
+
+     function cargarMarcas() {
+    $.ajax({
+        url: '@Url.Action("Listar_Marcas", "Mantenedor")',
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            console.log("Respuesta de la API:"); // Verifica la estructura en la consola
+
+            if (response.data) {
+                let dropdown = $("#Select_Marca");
+                dropdown.empty();
+                dropdown.append('<option value="">Seleccione Una Marca</option>');
+
+                $.each(response.data, function (index, item) {
+
+                    dropdown.append(`<option value="${item.IdMarca}">${item.Descripcion}</option>`);
+                });
+            } else {
+                console.error("La API no devolvió datos válidos.");
+            }
+
+        },
+        error: function (xhr, status, error) {
+            console.error("Error al obtener las marcas:", error);
+        }
+    });
+        }
+
+        function cargarCategorias() {
+      $.ajax({
+        url: '@Url.Action("Listar_Categoria", "Mantenedor")',
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            console.log("Respuesta de la API:"); // Verifica la estructura en la consola
+
+            if (response.data) {
+                let dropdown = $("#Select_Categoria");
+                dropdown.empty();
+                dropdown.append('<option value="">Seleccione Categoria </option>');
+
+                $.each(response.data, function (index, item) {
+
+                    dropdown.append(`<option value="${item.IdCategoria}">${item.Descripcion}</option>`);
+                });
+            } else {
+                console.error("La API no devolvió datos válidos.");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error al obtener las marcas:", error);
+        }
+    });
+    }
+
+        function Obtener_Nombre(input_File, input_text)
+        {
+            var archivo = document.getElementById(input_File).files[0];
+            if (archivo) {
+                // Verificar tipo de archivo
+                if (archivo.type.startsWith('image/')) {
+                    document.getElementById(input_text).value = archivo.name;
+                    $("#modalImagen").modal("hide");
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error, SOLO IMÁGENES",
+                        text: "Solo se permiten archivos de imagen",
+                        footer: '<p>Selecciona una imagen válida</p>'
+                    });
+                }
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "No se seleccionó ningún archivo",
+                    text: "Por favor selecciona una imagen",
+                    footer: '<p>Haz clic en el botón para seleccionar una imagen</p>'
+                });
+            }
+
+
+        }
+
+
+        function Ver_Imagen(inputName, InputURL) {
+
+            let url = InputURL.endsWith("/") ? InputURL : InputURL + "/";
+
+
+            if (inputName && inputName.value != "") {
+                Swal.fire({
+                    imageUrl: url + inputName, // Ruta accesible desde el navegador
+                    imageHeight: 150,
+                    imageAlt: "Vista Previa de la Imagen"
+                });
+
+            }
+            else
+            {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error al visualizar la Imagen",
+                    text: "Primero carga la imagen ",
+
+                });
+            }
+
+
+
+        }
+
+        function Seleccion_Text(selector, texto)
+        {
+            if (!texto) return;
+
+            $(selector).find("option").each(function () {
+                if ($(this).text().trim() == texto.trim()) {
+                    $(selector).val($(this).val()).change();
+                    return false;
+
+                }
+            });
+
+
+        }
+
+
+
+
+
+
+    </script>
+
+
+
+
+
+
+
+
+
+
+}
 
