@@ -30,6 +30,11 @@ namespace Capa_Presentacion_Tienda
             ));
 
 
+            bundles.Add(new ScriptBundle("~/bundles/Script_Categoria")
+            .Include("~/Scripts/jquery-3.6.0.min.js",
+             "~/Scripts/logica/Resumen.js"));
+
+
 
 
         }
