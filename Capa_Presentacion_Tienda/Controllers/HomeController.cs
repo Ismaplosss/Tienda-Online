@@ -35,6 +35,13 @@ namespace Capa_Presentacion_Tienda.Controllers
         }
 
 
+        [HttpGet]
+        public JsonResult Listar_Consulta()
+        {
+            Consulta objeto = new Cn_Consulta().Listar_panel();
+            return Json(new { data = objeto }, JsonRequestBehavior.AllowGet); // Retornar data como clave
+        }
+
 
 
 

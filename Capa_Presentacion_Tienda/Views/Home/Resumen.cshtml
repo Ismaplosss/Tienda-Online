@@ -4,5 +4,154 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Resumen</h2>
 
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Panel informativo</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Panel de control </li>
+    </ol>
+    <div class="row">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">Clientes en sistema</div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <h2 class="small text-white stretched-link" id="Can_Users">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-body">Cantidad de ventas</div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <h2 class="small text-white stretched-link" id="Can_Ventas">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">Productos </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <h2 class="small text-white stretched-link" id="Can_Producto">0</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-tag"></i>
+
+        Listado ventas
+    </div>
+
+    <div class="card-body">
+
+        <div class="row align-items-end">
+
+            <div class="col-sm-2">
+                <div class="mb-2">
+                    <label class="form-label">Fecha Inicio</label>
+                    <input class="form-control" type="date" id="Txt_Fecha_Inicio" name="fechainico" />
+                </div>
+
+            </div>
+            <div class="col-sm-2">
+                <div class="mb-2">
+                    <label class="form-label">Fecha Final</label>
+                    <input class="form-control" type="date" id="Txt_Fecha_Final" name="fechafinal" />
+                </div>
+
+            </div>
+            <div class="col-sm-2">
+                <div class="mb-2">
+                    <label class="form-label">Id Transacción: </label>
+                    <input class="form-control" type="text" id="TxtID" name="textID" placeholder="#" />
+                </div>
+
+            </div>
+
+            <div class="col-sm-2">
+                <div class="d-grid mb-2">
+                    <button class="btn btn-primary" id="Buscar" type="button"><i class="fas fa-search"></i> Buscar  </button>
+
+                </div>
+            </div>
+
+
+            <div class="col-sm-2">
+                <div class="d-grid mb-2">
+                    <button class="btn btn-success" type="submit"><i class="fas fa-file-excel"></i> Exportar</button>
+                </div>
+            </div>
+
+        </div>
+        <hr />
+
+        <table id="TB_Usuarios" class="display cell-border" style="width:100%">
+
+            <thead>
+                <tr>
+                    <th>Fecha Venta</th>
+                    <th>Cliente</th>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Total</th>
+                    <th>ID Transaccion </th>
+
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+
+@section scripts {
+
+    <script>
+
+       $(document).ready(function () {
+    $.ajax({
+        url: '@Url.Action("Listar_Consulta","Home")',
+        type: 'GET', // 'type' en minúsculas
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+            var objeto = data.data; // Usar 'data.data' porque eso es lo que estás enviando en el JSON
+
+            // Actualizar las cajas de texto con los datos
+            $('#Can_Users').text(objeto.TotalCliente);
+            $('#Can_Ventas').text(objeto.TotalVenta);
+            $('#Can_Producto').text(objeto.TotalProducto);
+        },
+        error: function () {
+            alert('Error al cargar los datos');
+        }
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+
+
+
+
+
+
+
+
+}
