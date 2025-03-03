@@ -19,6 +19,10 @@ namespace Capa_Presentacion_Tienda.Controllers
         {
             return View();
         }
+        public ActionResult Resumen()
+        {
+            return View();
+        }
 
 
         [HttpGet]
