@@ -55,5 +55,12 @@
     <Compile Include="Usuario.cs" />
     <Compile Include="Venta.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Scripts\babel.min.js" />
+    <Content Include="Scripts\polyfill.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

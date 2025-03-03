@@ -116,7 +116,7 @@
     <script>
 
        $(document).ready(function () {
-    $.ajax({
+      $.ajax({
         url: '@Url.Action("Listar_Consulta","Home")',
         type: 'GET', // 'type' en minúsculas
         dataType: "json",
@@ -132,8 +132,8 @@
         error: function () {
             alert('Error al cargar los datos');
         }
+      });
     });
-});
 
 
 
