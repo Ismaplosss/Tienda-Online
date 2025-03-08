@@ -1,4 +1,4 @@
-﻿using System.Web;
+﻿ using System.Web;
 using System.Web.Optimization;
 
 namespace Capa_Presentacion_Tienda
@@ -16,7 +16,8 @@ namespace Capa_Presentacion_Tienda
                 "~/Scripts/fontawesome/all.min.js",
                 "~/Scripts/DataTables/jquery.dataTables.js",
                 "~/Scripts/DataTables/dataTables.responsive.js",
-                "~/js/scripts.js"
+                "~/js/scripts.js",
+                "~/Scripts/jquery-ui-1-14.1.js"
             ));
 
             bundles.Add(new Bundle("~/bundles/bootstrap").Include(
@@ -26,14 +27,12 @@ namespace Capa_Presentacion_Tienda
             bundles.Add(new Bundle("~/Content/css").Include(
                 "~/css/site.css",
                 "~/Content/DataTable/css/jquery.dataTables.css",
-                "~/Content/DataTable/css/responsive.dataTables.css"
+                "~/Content/DataTable/css/responsive.dataTables.css",
+                "~/Content/jquery-ui.css"
             ));
 
 
-            bundles.Add(new ScriptBundle("~/bundles/Script_Categoria")
-            .Include("~/Scripts/jquery-3.6.0.min.js",
-             "~/Scripts/logica/Resumen.js"));
-
+           
 
 
 

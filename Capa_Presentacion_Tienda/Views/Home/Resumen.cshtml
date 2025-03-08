@@ -46,49 +46,55 @@
     </div>
 
     <div class="card-body">
+        <form action="@Url.Action("Exportar_Reportes","Home")" method="post">
+            <div class="row align-items-end">
 
-        <div class="row align-items-end">
+                <div class="col-sm-2">
+                    <div class="mb-2">
+                        <label class="form-label">Fecha Inicio</label>
+                        <input class="form-control" type="text" id="Txt_Fecha_Inicio" name="fechainico" />
+                    </div>
 
-            <div class="col-sm-2">
-                <div class="mb-2">
-                    <label class="form-label">Fecha Inicio</label>
-                    <input class="form-control" type="date" id="Txt_Fecha_Inicio" name="fechainico" />
+                </div>
+                <div class="col-sm-2">
+                    <div class="mb-2">
+                        <label class="form-label">Fecha Final</label>
+                        <input class="form-control" type="text" id="Txt_Fecha_Final" name="fechafinal" />
+                    </div>
+
+                </div>
+                <div class="col-sm-2">
+                    <div class="mb-2">
+                        <label class="form-label">Id Transacción: </label>
+                        <input class="form-control" type="text" id="TxtID" name="textID" placeholder="#" />
+                    </div>
+
+                </div>
+
+                <div class="col-sm-2">
+                    <div class="d-grid mb-2">
+                        <button class="btn btn-primary" id="Buscar" type="button"><i class="fas fa-search"></i> Buscar  </button>
+
+                    </div>
+                </div>
+
+
+                <div class="col-sm-2">
+                    <div class="d-grid mb-2">
+                        <button class="btn btn-success" type="submit"><i class="fas fa-file-excel"></i> Exportar</button>
+                    </div>
                 </div>
 
             </div>
-            <div class="col-sm-2">
-                <div class="mb-2">
-                    <label class="form-label">Fecha Final</label>
-                    <input class="form-control" type="date" id="Txt_Fecha_Final" name="fechafinal" />
-                </div>
-
-            </div>
-            <div class="col-sm-2">
-                <div class="mb-2">
-                    <label class="form-label">Id Transacción: </label>
-                    <input class="form-control" type="text" id="TxtID" name="textID" placeholder="#" />
-                </div>
-
-            </div>
-
-            <div class="col-sm-2">
-                <div class="d-grid mb-2">
-                    <button class="btn btn-primary" id="Buscar" type="button"><i class="fas fa-search"></i> Buscar  </button>
-
-                </div>
-            </div>
 
 
-            <div class="col-sm-2">
-                <div class="d-grid mb-2">
-                    <button class="btn btn-success" type="submit"><i class="fas fa-file-excel"></i> Exportar</button>
-                </div>
-            </div>
 
-        </div>
+
+        </form>
+       
         <hr />
 
-        <table id="TB_Usuarios" class="display cell-border" style="width:100%">
+        <table id="TB_Reportes" class="display cell-border" style="width:100%">
 
             <thead>
                 <tr>
@@ -115,27 +121,88 @@
 
     <script>
 
-       $(document).ready(function () {
-      $.ajax({
-        url: '@Url.Action("Listar_Consulta","Home")',
-        type: 'GET', // 'type' en minúsculas
-        dataType: "json",
-        contentType: "application/json; charset=utf-8",
-        success: function (data) {
-            var objeto = data.data; // Usar 'data.data' porque eso es lo que estás enviando en el JSON
+        var tablo;
 
-            // Actualizar las cajas de texto con los datos
-            $('#Can_Users').text(objeto.TotalCliente);
-            $('#Can_Ventas').text(objeto.TotalVenta);
-            $('#Can_Producto').text(objeto.TotalProducto);
-        },
-        error: function () {
-            alert('Error al cargar los datos');
-        }
-      });
-       });
 
-        
+        $(document).ready(function () {
+
+                  $("#Txt_Fecha_Inicio").datepicker({dateFormat : 'dd/mm/yy'}).datepicker('setDate', new Date());
+                  $("#Txt_Fecha_Final").datepicker({ dateFormat: 'dd/mm/yy' }).datepicker('setDate', new Date());
+
+               $(document).ready(function () {
+               $.ajax({
+                      url: '@Url.Action("Listar_Consulta","Home")',
+                      type: 'GET', // 'type' en minúsculas
+                      dataType: "json",
+                      contentType: "application/json; charset=utf-8",
+                      success: function (data) {
+                           var objeto = data.data; // Usar 'data.data' porque eso es lo que estás enviando en el JSON
+
+                            // Actualizar las cajas de texto con los datos
+                            $('#Can_Users').text(objeto.TotalCliente);
+                            $('#Can_Ventas').text(objeto.TotalVenta);
+                            $('#Can_Producto').text(objeto.TotalProducto);
+                       },
+                       error: function () {
+                       alert('Error al cargar los datos');
+                       }
+                       });
+                 });
+
+                    // Seguimos con script para listar filtrado
+                    // Parametros de seccion :  string Fecha_Inicio, string Fecha_Final, string Id)
+
+                   var Url = '@Url.Action("Listar_Reportes","Home")' +
+                   "?Fecha_Inicio=" + $("#Txt_Fecha_Inicio").val() +
+                   "&Fecha_Final=" + $("#Txt_Fecha_Final").val() +
+                        "&Id=" + $("#TxtID").val();
+
+
+
+            tablo = $("#TB_Reportes").DataTable({
+                responsive: true,
+                ordering: false,
+                "ajax": {
+                       url: Url,
+                       type: "GET",
+                       dataType: "json"
+                 },
+                "columns": [
+                    { "data": "Fecha_venta" },
+                    { "data": "Cliente" },
+                    { "data": "Producto" },
+                    { "data": "Precio" },
+                    { "data": "Cantidad" },
+                    { "data": "Total" },
+                    { "data": "Id_Transaccion"}
+
+
+                ],
+                  "language": {
+                      "url": "//cdn.datatables.net/plug-ins/2.2.2/i18n/es-ES.json"
+                   }
+            });
+
+        });
+
+
+
+        $("#Buscar").on("click", function () {
+
+                   var Nueva_Url = '@Url.Action("Listar_Reportes","Home")' +
+                   "?Fecha_Inicio=" + $("#Txt_Fecha_Inicio").val() +
+                   "&Fecha_Final=" + $("#Txt_Fecha_Final").val() +
+                   "&Id=" + $("#TxtID").val();
+
+                   tablo.ajax.url(Nueva_Url).load();
+
+
+
+
+        })
+
+
+
 
 
 

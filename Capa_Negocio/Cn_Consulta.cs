@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Capa_Negocio
 {
-   public   class Cn_Consulta
+   public   class Cn_Consulta 
     {
         CD_Consulta Consulta = new CD_Consulta();
         public Consulta Listar_panel()
@@ -17,6 +17,10 @@ namespace Capa_Negocio
         }
 
 
+        public List<Reportes> Lista_Reportes(string fecha_Inicio, string fecha_Final, string Id)
+        {
+            return Consulta.Lista_Reportes(fecha_Inicio, fecha_Final, Id);
+        }
 
     }
 }
