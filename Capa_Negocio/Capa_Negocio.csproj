@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,14 +42,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CN_Satinar.cs" />
     <Compile Include="Cn_Categoria.cs" />
     <Compile Include="cifrado.cs" />
     <Compile Include="Cn_Consulta.cs" />
+    <Compile Include="CN_Login.cs" />
     <Compile Include="Cn_Marca.cs" />
     <Compile Include="Cn_Producto.cs" />
     <Compile Include="Cn_Usuario.cs" />
     <Compile Include="Correo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="validaciones.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Capa_Datos\Capa_Datos.csproj">
