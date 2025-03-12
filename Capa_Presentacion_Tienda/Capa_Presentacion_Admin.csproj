@@ -548,6 +548,8 @@
     <Content Include="Views\Home\Resumen.cshtml" />
     <Content Include="Views\autenticador\Login.cshtml" />
     <Content Include="Views\autenticador\New_Pass.cshtml" />
+    <Content Include="Views\autenticador\TokenExpirado.cshtml" />
+    <Content Include="Views\autenticador\CorreoRestablecimiento.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

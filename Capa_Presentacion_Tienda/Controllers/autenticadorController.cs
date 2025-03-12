@@ -14,25 +14,33 @@ namespace Capa_Presentacion_Admin.Controllers
 {
     public class autenticadorController : Controller
     {
+        CN_Login login = new CN_Login();
         // GET: autenticador
         public ActionResult Login()
         {
             return View();
         }
 
-        public ActionResult New_Pass(string token)
+        public ActionResult CorreoRestablecimiento()
         {
-            if (string.IsNullOrEmpty(token) )//|| !_Login.VerificarToken(token))
-            {
-                ViewBag.Mensaje = "El enlace ha expirado o es inválido.";
-                return View("TokenExpirado"); // Aquí podrías crear una vista de error.
-            }
-
-            ViewBag.Token = token; // Pasamos el token para que el usuario pueda enviarlo con la nueva contraseña.
-            System.Diagnostics.Debug.WriteLine("Token recibido: " + token);
-
             return View();
         }
+
+
+        public ActionResult New_Pass(string token)
+        {
+            if (string.IsNullOrEmpty(token) || !login.VerificarTokens(token))
+            {
+                System.Diagnostics.Debug.WriteLine("Intento de acceso con token inválido o expirado: " + token);
+                ViewBag.Mensaje = "El enlace ha expirado o es inválido.";
+                return View("TokenExpirado"); // Vista de error
+            }
+
+            // Guardar en sesión en lugar de pasarlo directamente a la vista
+            Session["ResetToken"] = token;
+            return View();
+        }
+
 
 
 
@@ -72,23 +80,48 @@ namespace Capa_Presentacion_Admin.Controllers
             }
         }
 
-        
 
+        [HttpPost]
+        public JsonResult CambiarContra(string token, string contra, string contra2)
+        {
+            // Validación de datos
+            if (string.IsNullOrEmpty(contra) || string.IsNullOrEmpty(contra2) || !contra.Equals(contra2))
+            {
+                return Json(new { resultado = 0, mensaje = "Las contraseñas deben ser iguales y no estar vacías." }, JsonRequestBehavior.AllowGet);
+            }
 
+            // Intentar cambiar la contraseña
+            string mensaje;
+            bool resultado = login.CambiarContra(token, contra, out mensaje);
 
+            // Devolver la respuesta según el resultado
+            return Json(new { resultado = resultado ? 1 : 0, mensaje }, JsonRequestBehavior.AllowGet);
+        }
 
+        [HttpPost]
+        public JsonResult EnviarCorreo(string Correo)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(Correo))
+                {
+                    return Json(new { resultado = 0, Mensaje = "Es necesario escribir un correo" }, JsonRequestBehavior.AllowGet);
+                }
 
+                if (!login.VerificarCorreo(Correo)) // Si el correo NO existe
+                {
+                    return Json(new { resultado = 0, Mensaje = "El correo no existe en los registros" }, JsonRequestBehavior.AllowGet);
+                }
 
-
-
-
-
-
-
-
-
-
-
+                // Si el correo existe, generamos el token y enviamos el mensaje de éxito
+                login.GenerarToken(Correo);
+                return Json(new { resultado = 1, Mensaje = "Correo enviado correctamente" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { resultado = 0, Mensaje = "Ocurrió un error al procesar la solicitud: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
 
 
     }

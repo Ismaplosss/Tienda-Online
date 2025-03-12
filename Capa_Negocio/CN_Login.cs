@@ -49,15 +49,19 @@ namespace Capa_Negocio
            
         }
 
+        public bool VerificarTokens(string token)
+        {
+            return _Login.VerificarTokens(token);
+        }
 
-
-
-
-
-         
-
-
-
+        public bool CambiarContra(string token, string conttra, out string mensaje) 
+        
+        { 
+            string temp= cifrado.Cifrado_Password(conttra);
+            return _Login.CambiarContrasena(token, temp, out mensaje);
+        
+        
+        }
 
         public string GenerarToken(string correo)
         {
@@ -77,7 +81,7 @@ namespace Capa_Negocio
             return tokenFull;
         }
 
-        private bool VerificarCorreo(string correo)
+        public bool VerificarCorreo(string correo)
         {
             return _Login.VerificarCorreo(correo);
         }
