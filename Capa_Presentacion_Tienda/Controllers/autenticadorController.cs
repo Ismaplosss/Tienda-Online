@@ -20,6 +20,22 @@ namespace Capa_Presentacion_Admin.Controllers
             return View();
         }
 
+        public ActionResult New_Pass(string token)
+        {
+            if (string.IsNullOrEmpty(token) )//|| !_Login.VerificarToken(token))
+            {
+                ViewBag.Mensaje = "El enlace ha expirado o es inválido.";
+                return View("TokenExpirado"); // Aquí podrías crear una vista de error.
+            }
+
+            ViewBag.Token = token; // Pasamos el token para que el usuario pueda enviarlo con la nueva contraseña.
+            System.Diagnostics.Debug.WriteLine("Token recibido: " + token);
+
+            return View();
+        }
+
+
+
         [HttpPost]
         public JsonResult Acceso_Sistema(string correo, string hash)
         {
@@ -52,11 +68,11 @@ namespace Capa_Presentacion_Admin.Controllers
             catch (Exception ex)
             {
                 // Manejo de excepciones y respuesta al cliente
-                return Json(new { resultado = 0, mensaje = "Error en el servidor, intente más tarde." });
+                return Json(new { resultado = 0, mensaje = $"Error en el servidor, intente más tarde: {ex.Message}" });
             }
         }
 
-
+        
 
 
 

@@ -40,7 +40,10 @@ namespace Capa_Datos
                         }
                         else if (restablecer)
                         {
-                            resumen = "Antes de seguir necesitaras reestablecer tu contraseña ";
+                            resumen = "Antes de seguir necesitaras reestablecer tu contraseña. \n" +
+                                "se envió un correo para el restablecimiento ...";
+
+                            
                         }
                         else if (hash == hashGuardado) 
                         {
@@ -57,8 +60,78 @@ namespace Capa_Datos
             return resumen ;
         }
 
+        public bool VerificarCorreo( string Correo)
+        {
+
+            try
+            {
+
+                using(SqlConnection Conextion = new SqlConnection(Conexion.Conecctions))
+                {
+                    string query = "Select * from Usuario Where Correo=@Correo";
+                    SqlCommand cmd = new SqlCommand(query, Conextion);
+                    cmd.Parameters.AddWithValue("@Correo", Correo);
+                    Conextion.Open();
+
+                    int cantidad = Convert.ToInt32(cmd.ExecuteScalar());
+                    return true;
 
 
+                }
+
+            }
+            catch (Exception ex) 
+            {
+                return false;
+            }
+
+            
+
+        }
+
+        public bool AlmacenarTokens(string Correo,string Tocken, DateTime Fecha_Expiracion)
+        {
+            try
+            {
+
+                using (SqlConnection connection = new SqlConnection(Conexion.Conecctions))
+                {
+
+                    string query = " Insert Into Tokens (Correo, Token, Fecha_Expiracion) values (@Correo , @Token, @Fecha_Expiracion)";
+                    SqlCommand cmd = new SqlCommand(query, connection);
+                    cmd.Parameters.AddWithValue("@Correo", Correo);
+                    cmd.Parameters.AddWithValue("@Token", Tocken);
+                    cmd.Parameters.AddWithValue("@Fecha_Expiracion", Fecha_Expiracion);
+
+                    connection.Open();
+
+                    int Cantidad = cmd.ExecuteNonQuery();
+                    if (Cantidad != 0)
+                    {
+                        return true;
+
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return false;
+            }
+           
+
+
+
+
+
+           
+        }
 
     }
 }
