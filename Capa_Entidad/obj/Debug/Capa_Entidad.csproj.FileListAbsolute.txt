@@ -4,3 +4,9 @@ C:\Users\ismaq\source\repos\Tienda Online\Capa_Entidad\obj\Debug\Capa_Entidad.cs
 C:\Users\ismaq\source\repos\Tienda Online\Capa_Entidad\obj\Debug\Capa_Entidad.csproj.CoreCompileInputs.cache
 C:\Users\ismaq\source\repos\Tienda Online\Capa_Entidad\obj\Debug\Capa_Entidad.dll
 C:\Users\ismaq\source\repos\Tienda Online\Capa_Entidad\obj\Debug\Capa_Entidad.pdb
+C:\Users\ismaq\source\repos\Tienda-Online\Capa_Entidad\bin\Debug\Capa_Entidad.dll
+C:\Users\ismaq\source\repos\Tienda-Online\Capa_Entidad\bin\Debug\Capa_Entidad.pdb
+C:\Users\ismaq\source\repos\Tienda-Online\Capa_Entidad\obj\Debug\Capa_Entidad.csproj.AssemblyReference.cache
+C:\Users\ismaq\source\repos\Tienda-Online\Capa_Entidad\obj\Debug\Capa_Entidad.csproj.CoreCompileInputs.cache
+C:\Users\ismaq\source\repos\Tienda-Online\Capa_Entidad\obj\Debug\Capa_Entidad.dll
+C:\Users\ismaq\source\repos\Tienda-Online\Capa_Entidad\obj\Debug\Capa_Entidad.pdb

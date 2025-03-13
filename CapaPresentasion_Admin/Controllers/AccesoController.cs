@@ -4,15 +4,14 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace CapaPresentasion_Admin.Controllers
+namespace CapaPresentasion_Tienda.Controllers
 {
-    public class HomeController : Controller
+    public class AccesoController : Controller
     {
-        public ActionResult Index()
+        // GET: Acceso
+        public ActionResult Login()
         {
             return View();
         }
-
-    
     }
 }
