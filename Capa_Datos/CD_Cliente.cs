@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,7 +47,7 @@ namespace Capa_Datos
                 Mensaje = Error_1.Message;
             }
             return Id_Gen;
-        }
+        } //Si
 
         public bool Actuaizar_Cliente(Cliente obj, out string Mensaje)
         {
@@ -86,7 +87,7 @@ namespace Capa_Datos
             }
 
             return Resultado;
-        }
+        } // NO
 
         public string AccesoCliente(string Correo, string hash, out string resumen)
         {
@@ -121,9 +122,24 @@ namespace Capa_Datos
                         }
                         else if (hash == hashGuardado)
                         {
+
+                            using (SqlConnection ConeCC = new SqlConnection(Conexion.Conecctions))
+                            {
+                                string query2 = "UPDATE Cliente SET Intentos = 0 WHERE Correo = @Correo";
+                                SqlCommand cmd2 = new SqlCommand(query2, ConeCC);
+                                cmd2.Parameters.AddWithValue("@Correo", Correo);
+                                ConeCC.Open();
+                                cmd2.ExecuteNonQuery();
+                                ConeCC.Close();
+                            }
                             resumen = "Login";
                         }
-                        else if (Intentos >= 3)
+                        else if (hash != hashGuardado) 
+                        { 
+                            resumen = "Bloquear";
+                        }
+                        
+                        else if (Intentos > 3)
                         {
                             resumen = "Bloqueado";
                         }
@@ -136,7 +152,63 @@ namespace Capa_Datos
             }
 
             return resumen;
+        } // si
+
+        public bool BloquearCliente(string Correo)
+        {
+            int Intentos = 0;
+            try
+            {
+                using (SqlConnection Conex = new SqlConnection(Conexion.Conecctions))
+                {
+                    string query = "SELECT Intentos FROM Cliente WHERE Correo = @Correo";
+                    SqlCommand cmd = new SqlCommand(query, Conex);
+                    cmd.Parameters.AddWithValue("@Correo", Correo);
+                    Conex.Open();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        reader.Read();
+                        Intentos = reader.GetInt32(0);
+                    }
+
+                    Conex.Close();
+                    if (Intentos <= 3)
+                    {
+                        Intentos++;
+                        using (SqlConnection ConeCC = new SqlConnection(Conexion.Conecctions))
+                        {
+                            string query2;
+                            if (Intentos == 3)
+                            {
+                                query2 = "UPDATE Cliente SET Intentos = @Intentos,Activo=0 WHERE Correo = @Correo";
+                            }
+                            else
+                            {
+                                query2 = "UPDATE Cliente SET Intentos = @Intentos WHERE Correo = @Correo";
+
+                            }
+                                
+                            SqlCommand cmd2 = new SqlCommand(query2, ConeCC);
+                            cmd2.Parameters.AddWithValue("@Correo", Correo);
+                            cmd2.Parameters.AddWithValue("@Intentos", Intentos);
+                            ConeCC.Open();
+                            cmd2.ExecuteNonQuery();
+                            ConeCC.Close();
+                        }
+                        return false; 
+                    }
+
+                    return true; 
+                }
+            }
+            catch (Exception)
+            {
+                return true; 
+            }
         }
+
+
 
         public bool VerificarCorreo(string Correo)
         {

@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CN_Cliente_Login.cs" />
     <Compile Include="CN_Satinar.cs" />
     <Compile Include="Cn_Categoria.cs" />
     <Compile Include="cifrado.cs" />
