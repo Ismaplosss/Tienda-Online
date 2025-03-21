@@ -17,10 +17,22 @@ namespace Capa_Negocio
         CN_Satinar satinar = new CN_Satinar();
         cifrado cifrado = new cifrado();
 
+
         public bool RegistrarCliente(Cliente cliente, out string mensaje)
         {
+          string  Generar_ramdons = Guid.NewGuid().ToString().Replace("-", "").Substring(8);
+
+            cliente.Clave= cifrado.Cifrado_Password(Generar_ramdons);
             int temp= Clientes.RegistrarCliente(cliente,out mensaje);
-            return temp > 0;
+            if (temp == 0)
+            {
+                return false;
+            }
+
+            EnviarTocken(cliente.Correo,GenerarToken(cliente.Correo));
+            return true;
+
+            
         }
 
         public string AccesoCliente(string correo, string hash, out string Resumen)
@@ -114,7 +126,7 @@ namespace Capa_Negocio
 
 
             string asunto = "Restablecimiento de contraseña";
-            string enlaceRecuperacion = $"https://localhost:44369/autenticador/New_Pass?token={token}";
+            string enlaceRecuperacion = $"https://localhost:44382/Acceso/New_Pass?token={token}";
 
             string mensajeHtml = $@"
             <!DOCTYPE html>

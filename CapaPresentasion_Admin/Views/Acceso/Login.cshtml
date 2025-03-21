@@ -5,13 +5,138 @@
 
 <!DOCTYPE html>
 
-<html>
+<!DOCTYPE html>
+<html lang="es">
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Login</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Inicio de sección</title>
+    <link href="~/css/styles.css" rel="stylesheet" />
+    <!-- Cargar jQuery antes de otros scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
-<body>
-    <div> 
+
+<body class="bg-primary">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5">
+                            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                <div class="card-header"><h3 class="text-center font-weight-light my-4">Acceso</h3></div>
+                                <div class="card-body">
+                                    <form id="loginForm">
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="Txtcorreo" type="email" placeholder="correo@example.com" />
+                                            <label for="inputEmail">Correo Electrónico</label>
+                                        </div>
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="TxtPass" type="password" placeholder="Contraseña" />
+                                            <label for="inputPassword">Contraseña</label>
+                                        </div>
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" id="inputRememberPassword" type="checkbox" value="" />
+                                            <label class="form-check-label" for="inputRememberPassword">¿Recordar acceso?</label>
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                            <a class="small" href="CorreoRestablecimiento">¿Olvidaste la contraseña?</a>
+                                            <button type="button" class="btn btn-primary" onclick="Verificar_Paso()">Acceso </button>
+
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <div id="layoutAuthentication_footer">
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Desarrollada por: Ismael Quesada</div>
+                        <div>
+                            <a href="#">Privacy Policy</a>
+                            &middot;
+                            <a href="#">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="~/js/scripts.js"></script>
+    <script>
+
+    function Verificar_Paso() {
+    // Validación simple para asegurarse de que los campos no estén vacíos
+    var correo = $('#Txtcorreo').val();
+    var password = $('#TxtPass').val();
+
+    if (!correo || !password) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Campos incompletos',
+            text: 'Por favor, ingrese ambos datos: correo y contraseña.',
+        });
+        return;
+    }
+
+    $.ajax({
+        url: '@Url.Action("Acceso_Sistema", "Acceso")',
+        type: 'POST',
+        contentType: 'application/json',  // Importante para enviar JSON
+        data: JSON.stringify({ correo: correo, hash: password }),  // Enviar ambos datos
+        success: function (data) {
+            if (data.resultado === 1) {
+                Swal.fire({
+                    title: "Ingreso exitoso!",
+                    icon: "success",
+                    draggable: true
+                });
+
+                setTimeout(function () {
+
+                    window.location.href = "/Home/Resumen";
+                }, 1100);
+            } else {
+                Swal.fire({
+                    title: "¿Datos Correctos?",
+                    text: data.mensaje,
+                    icon: "question"
+                });
+            }
+        },
+        error: function (xhr, status, error) {
+            // Esta función se ejecuta si ocurre un error en la llamada AJAX
+            Swal.fire({
+                icon: "error",
+                title: "Error al establecer conexión con el servidor",
+                text: error || "No se pudo conectar con el servidor.",
+            });
+        }
+    });
+    }
+
+
+
+
+    </script>
+
+
+
 </body>
 </html>
+
+
+
+

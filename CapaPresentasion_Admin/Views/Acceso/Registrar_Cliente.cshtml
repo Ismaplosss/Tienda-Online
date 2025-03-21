@@ -1,0 +1,136 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Registro Cliente</title>
+    <link href="~/css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+<body class="bg-primary">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-7">
+                            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                <div class="card-header"><h3 class="text-center font-weight-light my-4">Crear cuenta</h3></div>
+                                <div class="card-body">
+                                    <form id="formRegistrar">
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <div class="form-floating mb-3 mb-md-0">
+                                                    <input class="form-control" id="txt_Nombre" type="text" placeholder="Tu Nombre" />
+                                                    <label for="txt_Nombre">Nombre</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating">
+                                                    <input class="form-control" id="Txt_Apellidos" type="text" placeholder="Tus Apellidos" />
+                                                    <label for="Txt_Apellidos">Apellidos</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="Txt_Correo" type="email" placeholder="nombre@ejemplo.com" />
+                                            <label for="Txt_Correo">Correo Eléctronico</label>
+                                        </div>
+
+                                    </form>
+                                    <div class="mt-4 mb-0">
+                                        <div class="d-grid">
+                                            <button class="btn btn-primary btn-block" onclick="Guardar()">Crear Cuenta</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-center py-3">
+                                    <div class="small">
+                                        <a href="@Url.Action("Login","Acceso")">¿Tienes cuenta? Inicia sesión</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <div id="layoutAuthentication_footer">
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                        <div>
+                            <a href="#">Privacy Policy</a>
+                            &middot;
+                            <a href="#">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script>
+
+       function Guardar() {
+    var Cliente = {
+        Activo: true,  // Compara con "true" como cadena
+        Apellidos: $("#Txt_Apellidos").val().trim(),
+        Correo: $("#Txt_Correo").val().trim(),
+        IdCliente: 0,
+        Nombre: $("#txt_Nombre").val().trim()
+    };
+
+    jQuery.ajax({
+        url: '@Url.Action("Registrar_Cliente_DB", "Acceso")',
+        type: "POST",
+        data: JSON.stringify(Cliente),  // Enviar directamente el objeto Cliente
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+            if (data.resultado > 0) {
+                setTimeout(function () {
+                    Swal.fire({
+                        title: data.mensaje,
+                        icon: "success",
+                        draggable: true
+                    });
+                }, 500);
+            } else {
+                Swal.fire({
+                    title: "¿Ingresaste todos los datos?",
+                    text: data.mensaje || "Por favor revisa los datos.",
+                    icon: "question"
+                });
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            Swal.fire({
+                icon: "error",
+                title: "Error al establecer conexión con el servidor",
+                text: textStatus + ": " + errorThrown,  // Concatenación de los valores de error
+                footer: '<a href="#">¿Por qué ocurre este error?</a>'
+            });
+        }
+    });
+}
+
+
+
+
+    </script>
+    <script src="~/js/scripts.js"></script>
+</body>
+</html>

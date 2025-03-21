@@ -28,7 +28,7 @@ namespace Capa_Datos
                     cmd.Parameters.AddWithValue("Apellidos", obj.Apellidos);
                     cmd.Parameters.AddWithValue("Correo", obj.Correo);
                     cmd.Parameters.AddWithValue("Clave", obj.Clave);
-                    cmd.Parameters.AddWithValue("Activo", obj.Activo);
+                    cmd.Parameters.AddWithValue("Activo", true);
 
                     // Parámetros de salida
                     cmd.Parameters.Add("Resultado", SqlDbType.Int).Direction = ParameterDirection.Output;
@@ -92,63 +92,71 @@ namespace Capa_Datos
         public string AccesoCliente(string Correo, string hash, out string resumen)
         {
             resumen = string.Empty; // Mensaje por defecto
-            string query = "SELECT Activo, Reestablecer,Intentos Clave FROM Cliente WHERE Correo = @Correo";
+            string query = "SELECT Activo, Reestablecer,Intentos, Clave FROM Cliente WHERE Correo = @Correo";
 
-            using (SqlConnection Conexionn = new SqlConnection(Conexion.Conecctions))
+            try
             {
-                SqlCommand cmd = new SqlCommand(query, Conexionn);
-                cmd.Parameters.AddWithValue("@Correo", Correo);
-                Conexionn.Open();
-
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                using (SqlConnection Conexionn = new SqlConnection(Conexion.Conecctions))
                 {
-                    if (reader.Read()) // Si encontró un usuario con ese email
+                    SqlCommand cmd = new SqlCommand(query, Conexionn);
+                    cmd.Parameters.AddWithValue("@Correo", Correo);
+                    Conexionn.Open();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        bool activo = Convert.ToBoolean(reader["Activo"]);
-                        bool restablecer = Convert.ToBoolean(reader["Reestablecer"]);
-                        int Intentos = Convert.ToInt32(reader["Intentos"]);
-                        string hashGuardado = reader["Clave"].ToString();
-
-                        if (!activo)
+                        if (reader.Read()) // Si encontró un usuario con ese email
                         {
-                            resumen = "Estas desactivado, Contacta directamente con soporte";
-                        }
-                        else if (restablecer)
-                        {
-                            resumen = "Antes de seguir necesitaras reestablecer tu contraseña. \n" +
-                                "se envió un correo para el restablecimiento ...";
+                            bool activo = Convert.ToBoolean(reader["Activo"]);
+                            bool restablecer = Convert.ToBoolean(reader["Reestablecer"]);
+                            int Intentos = Convert.ToInt32(reader["Intentos"]);
+                            string hashGuardado = reader["Clave"].ToString();
 
-
-                        }
-                        else if (hash == hashGuardado)
-                        {
-
-                            using (SqlConnection ConeCC = new SqlConnection(Conexion.Conecctions))
+                            if (!activo)
                             {
-                                string query2 = "UPDATE Cliente SET Intentos = 0 WHERE Correo = @Correo";
-                                SqlCommand cmd2 = new SqlCommand(query2, ConeCC);
-                                cmd2.Parameters.AddWithValue("@Correo", Correo);
-                                ConeCC.Open();
-                                cmd2.ExecuteNonQuery();
-                                ConeCC.Close();
+                                resumen = "Estas desactivado, Contacta directamente con soporte";
                             }
-                            resumen = "Login";
-                        }
-                        else if (hash != hashGuardado) 
-                        { 
-                            resumen = "Bloquear";
-                        }
-                        
-                        else if (Intentos > 3)
-                        {
-                            resumen = "Bloqueado";
-                        }
-                        else
-                        {
-                            resumen = "Correo electronico o contraseña incorrectos";
+                            else if (restablecer)
+                            {
+                                resumen = "Antes de seguir necesitaras reestablecer tu contraseña. \n" +
+                                    "se envió un correo para el restablecimiento ...";
+
+
+                            }
+                            else if (hash == hashGuardado)
+                            {
+
+                                using (SqlConnection ConeCC = new SqlConnection(Conexion.Conecctions))
+                                {
+                                    string query2 = "UPDATE Cliente SET Intentos = 0 WHERE Correo = @Correo";
+                                    SqlCommand cmd2 = new SqlCommand(query2, ConeCC);
+                                    cmd2.Parameters.AddWithValue("@Correo", Correo);
+                                    ConeCC.Open();
+                                    cmd2.ExecuteNonQuery();
+                                    ConeCC.Close();
+                                }
+                                resumen = "Login";
+                            }
+                            else if (hash != hashGuardado)
+                            {
+                                resumen = "Bloquear";
+                            }
+
+                            else if (Intentos > 3)
+                            {
+                                resumen = "Bloqueado";
+                            }
+                            else
+                            {
+                                resumen = "Correo electronico o contraseña incorrectos";
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception)
+            {
+
+                resumen = "Error del sistema";
             }
 
             return resumen;
@@ -218,7 +226,7 @@ namespace Capa_Datos
 
                 using (SqlConnection Conextion = new SqlConnection(Conexion.Conecctions))
                 {
-                    string query = "SELECT COUNT(*) FROM  Cliente Correo = @Correo";
+                    string query = "SELECT COUNT(*) FROM  Cliente where Correo = @Correo";
                     SqlCommand cmd = new SqlCommand(query, Conextion);
                     cmd.Parameters.AddWithValue("@Correo", Correo);
                     Conextion.Open();
@@ -336,7 +344,7 @@ namespace Capa_Datos
             {
                 using (SqlConnection connection = new SqlConnection(Conexion.Conecctions))
                 {
-                    SqlCommand cmd = new SqlCommand("Actualizar_Contrasena", connection);
+                    SqlCommand cmd = new SqlCommand("Actualizar_Contrasena_Cliente", connection);
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.AddWithValue("@Token", token);
