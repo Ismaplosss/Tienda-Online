@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 
 namespace CapaPresentasion_Tienda.Controllers
 {
@@ -66,7 +67,10 @@ namespace CapaPresentasion_Tienda.Controllers
 
                 if (resultado.Equals("Login"))
                 {
+                    Session["Cliente"]=correo;
+                    FormsAuthentication.SetAuthCookie(correo,false);
                     return Json(new { resultado = 1, mensaje = "Ingreso exitoso" });
+                    
                 }
                 else if (resultado.Equals("Bloquear")   )
                 {
